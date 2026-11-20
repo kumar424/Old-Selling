@@ -142,8 +142,8 @@
           <label>Company name or product <span class="optional">(optional)</span><input name="company" type="text" placeholder="Company or product name"></label>
           <label>Your feedback or requirement<textarea name="message" rows="4" placeholder="Tell us what you think..." required></textarea></label>
           <label class="checkbox-label"><input type="checkbox" name="updates"><span>I’d like to receive occasional updates about this idea.</span></label>
-          <button class="button button-primary submit-button" type="submit">Prepare email <span>↗</span></button>
-          <p class="form-note" id="form-note" aria-live="polite">Your email app will open with your message ready to send. No information is stored by this demo website.</p>
+          <button class="button button-primary submit-button" type="submit">Send feedback <span>↗</span></button>
+          <p class="form-note" id="form-note" aria-live="polite">Your message will be saved directly to our team.</p>
         </form>
       </div>
     </section>
@@ -158,6 +158,7 @@
     <p>An idea to connect people, places and opportunities.</p>
     <span class="copyright">© <span id="year"></span> Oldselling. All rights reserved.</span>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>
 </html>

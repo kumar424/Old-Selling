@@ -24,23 +24,40 @@ document.querySelectorAll("[data-vote]").forEach(button => {
   });
 });
 
-// No backend/email service is configured. Prepare an email in the visitor's email app instead.
-const contactForm = document.getElementById("contact-form");
-contactForm.addEventListener("submit", event => {
-  event.preventDefault();
-  const data = new FormData(contactForm);
-  const name = String(data.get("name") || "").trim();
-  const email = String(data.get("email") || "").trim();
-  const company = String(data.get("company") || "").trim();
-  const message = String(data.get("message") || "").trim();
-  const updates = data.get("updates") ? "Yes" : "No";
-  const subject = encodeURIComponent("Website feedback / enquiry — Oldselling");
-  const body = encodeURIComponent(
-    `Name: ${name}\nEmail: ${email}\nCompany / product: ${company || "Not provided"}\nInterested in updates: ${updates}\n\nFeedback / requirement:\n${message}`
-  );
-  // Replace this placeholder with your real contact email before publishing.
-  const contactEmail = "hello@oldselling.in";
-  document.getElementById("form-note").textContent =
-    `Opening your email app addressed to ${contactEmail}. Please review and send the message there.`;
-  window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
+//***********************************database - supabase connection related code **************************************//
+
+const SUPABASE_URL = "https://rfrqyrswgszcjcdqriwb.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ndUjcN5KgFWJb0txQAT-cQ_4SLXw0a3";
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const form = document.getElementById("contact-form");
+const formNote = document.getElementById("form-note");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const submitBtn = form.querySelector(".submit-button");
+  submitBtn.disabled = true;
+  formNote.textContent = "Sending your feedback...";
+
+  const formData = new FormData(form);
+  const { error } = await db
+    .from("feedback_submissions")
+    .insert([{
+      name: formData.get("name"),
+      email: formData.get("email"),
+      company: formData.get("company") || null,
+      message: formData.get("message"),
+      updates: formData.get("updates") === "on",
+    }]);
+
+  if (error) {
+    formNote.textContent = "Could not send feedback. Please try again.";
+    console.error("Supabase insert error:", error);
+  } else {
+    formNote.textContent = "Thanks! Your feedback has been saved.";
+    form.reset();
+  }
+
+  submitBtn.disabled = false;
 });
